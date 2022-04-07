@@ -1,4 +1,5 @@
 import './App.scss';
+import './font/pokemon_classic.ttf'; 
 import { useState, useEffect } from 'react';
 import useWebSocket from 'react-use-websocket';
 import _ from 'lodash';
@@ -14,6 +15,8 @@ function App() {
     types: [],
     sprite: ''
   });
+
+  const [spriteBlink, setSpriteBlink] = useState(pokeInfo.sprite)
 
   const { 
     sendMessage,
@@ -39,52 +42,64 @@ function App() {
     }
   }, [pokeInfoEvent]);
 
-  const { name, id, types, sprite } = pokeInfo;
-  const mapTypes = () => {
+  const { name, id, types, sprite, spriteShiny } = pokeInfo;
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setSpriteBlink(spriteBlink === sprite && spriteShiny ? spriteShiny : sprite)
+  //   }, 2000)
+  // }, [spriteBlink])
+
+  const mapTypes = (types) => {
     return _.map(types, (type) => <TypeBox key={type} type={type} />);
   }
 
-  const getMoveEffects = (type) => {
+  const getTypeEffectivenessByTypes = () => {
+    const type = types[0]
+    let mergedTypeEffects = {}
     const keys = _.keys(WEAKNESS_DATA);
-    const superEffect = []
-    const halfEffect = []
-    const normalEffect = []
-    const noEffect = []
 
-    let effects = {}
-    _.forEach(keys, (key) => {
-      const dataForType = WEAKNESS_DATA[key];
-      const damage = dataForType[type];
-      switch(damage) {
-        case 2: 
-          superEffect.push(key);
-          break;
-        case 1:
-          normalEffect.push(key);
-          break;
-        case 0.5:
-          halfEffect.push(key);
-          break;
-        default:
-          noEffect.push(key);
+    if(types && types.length) {
+      const type2 = types.length > 1 ? types[1] : null
+      _.forEach(keys, (key) => {
+        const dataByTypeKey = WEAKNESS_DATA[key];
+        const combinedPoints = type2 ? dataByTypeKey[type] * dataByTypeKey[type2] : dataByTypeKey[type] 
+        mergedTypeEffects = {
+          ...mergedTypeEffects,
+          [key]: combinedPoints
+        }
+      })
+      return mergedTypeEffects;
+    }
+  }
+
+  const mapEffectivenessInfos = () => {
+    const effectivenessByTypes = getTypeEffectivenessByTypes()
+    const weaknessArray = []
+    const resistanceArray = []
+    const immuneArray = []
+
+    _.forEach(effectivenessByTypes, (value, key) => {
+      if (value === 2) {
+        weaknessArray.push(key)
       }
-    });
 
-    console.log({noEffect, normalEffect, halfEffect, superEffect, effects})
+      if (value < 1) {
+        resistanceArray.push(key)
+      }
+
+      if (value === 0) {
+        immuneArray.push(key)
+      }
+    })
+
     return {
-      noEffect,
-      normalEffect,
-      halfEffect,
-      superEffect
+      weaknessArray,
+      resistanceArray,
+      immuneArray
     }
   }
-
-  const getWeakness = () => {
-    if(types.length > 1) {
-      const combined = []
-      _.forEach(types, (type) => combined.push(getMoveEffects(type)))
-    }
-  }
+  const mappedEffectivenessInfos = mapEffectivenessInfos()
 
   return (
     <div className="App">
@@ -101,6 +116,10 @@ function App() {
         </div>
         <div className='pokedexBody'>
           <div className='pokedexScreen'>
+            <div className='pokedexScreenLights'>
+              <div className='miniCircle redLight'></div>
+              <div className='miniCircle redLight'></div>
+            </div>
             <div className='innerScreen'>
               <h3>{`${name.toUpperCase()} #${id}`}</h3>
               <div className='contentBlock'>
@@ -112,17 +131,48 @@ function App() {
                   </div>
                 </div>
                 <div className='rightContent'>
-                  <h4>TYPES</h4>
+                  <h4>TYPE</h4>
                   <div className='typesContainer'>
-                    {mapTypes()}
+                    {mapTypes(types)}
                   </div>
                 </div>
               </div>
-              <div className='contentBlock'>
-                {`WEAKNESS: ${getWeakness()}`}
+              <div className='contentBlock effectivenessBlock'>
+                WEAKNESS: 
+                <div className='effectivenessContent'>
+                  {mapTypes(mappedEffectivenessInfos.weaknessArray)}
+                </div> 
+              </div>
+              <div className='contentBlock effectivenessBlock'>
+                RESISTANCE: 
+                <div className='effectivenessContent'>
+                  {mapTypes(mappedEffectivenessInfos.resistanceArray)}
+                </div>
+              </div>
+              <div className='contentBlock effectivenessBlock'>
+                IMMUNE: 
+                <div className='effectivenessContent'>
+                  {mapTypes(mappedEffectivenessInfos.immuneArray)}
+                </div>
               </div>
             </div>
           </div>
+          <div className='screenCurvedPart'>
+            <div className='lines'>
+              <div className='line'></div>
+              <div className='line'></div>
+              <div className='line'></div>
+            </div>
+          </div>
+          {/* <div className='bottomContainer'>
+            <div className='bottomButtons'>
+              <div className='circularButton'></div>
+              <div className='flatButtons'>
+                <div className='flatButton greenLight'></div>
+                <div className='flatButton redLight'></div>
+              </div>
+            </div>
+          </div> */}
         </div>
       </div>
     </div>

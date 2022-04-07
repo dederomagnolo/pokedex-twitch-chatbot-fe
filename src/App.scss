@@ -1,9 +1,21 @@
-body {
-  margin: 0;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+@font-face {
+  font-family: 'Pokemon Classic';
+  src: local('Pokemon Classic'),
+       url('./font/pokemon_classic.ttf') format('ttf');
 }
 
-h4 {
+@font-face {
+  font-family: 'Pokemon Ruby';
+  src: local('Pokemon Ruby'),
+       url('./font/poke_rubi.fon') format('fon');
+}
+
+body {
+  margin: 0;
+  font-family: "Pokemon Classic";
+}
+
+h4, h3 {
   margin: 4px;
 }
 
@@ -59,19 +71,19 @@ h4 {
       border-radius: 50%;
       border: 1px grey solid;
     }
-
-    .redLight {
-      background-color: red;
-    }
-
-    .yellowLight {
-      background-color: yellow;
-    }
-
-    .greenLight {
-      background: greenyellow;
-    }
   }
+}
+
+.redLight {
+  background-color: red;
+}
+
+.yellowLight {
+  background-color: yellow;
+}
+
+.greenLight {
+  background: greenyellow;
 }
 
 .pokedexBody {
@@ -79,32 +91,88 @@ h4 {
   height: 100%;
 }
 
-.pokedexScreen {
-  margin: 15px;
+.screenCurvedPart {
+  margin: 10px;
+  margin-top: 0;
+  margin-left: 0;
+  margin-bottom: 5px;
+  padding: 1px;
+  height: 20px;
   min-width: 90%;
-  min-height: 90%;
-  border-radius: 15px;
   background-image: linear-gradient(
     -135deg, white 0%, white 90%, rgba(0,0,0,0) 90%, rgba(0,0,0,0) 90%
   );
+  border-bottom-right-radius: 15px;
+  display: flex;
+
+  .lines {
+    margin-right: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-end;
+    .line {
+      background-color: #343434;
+      margin: 1px;
+      height: 2px;
+      width: 25px;
+    }
+  }
+}
+
+.pokedexScreen {
+  margin: 10px;
+  margin-bottom: 0;
+  min-width: 90%;
+  height: auto;
+  border-radius: 15px 15px 0 0;
+  background-color: white;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  
+  .pokedexScreenLights {
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+    align-items: center;
+    .miniCircle {
+      border: 1px black solid;
+      border-radius: 50%;
+      width: 5px;
+      height: 5px;
+    }
+  }
 
   .innerScreen {
+    font-size: 12px;
     background-color: #343434;
     color: white;
     margin: 8px;
-    min-width: 95%;
+    margin-top: 0;
     height: 70%;
+    padding: 4px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
+    .effectivenessBlock {
+      flex-direction: column;
+    }
+
     .contentBlock {
       display: flex;
       width: 100%;
+
+      .effectivenessContent {
+        margin: 3px 3px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
       .leftContent {
         .pokeSpriteContainer {
           margin: 5px;
@@ -114,8 +182,8 @@ h4 {
           display: flex;
           justify-content: center;
           align-items: center;
-          width: 80px;
-          height: 80px;
+          width: 60px;
+          height: 60px;
           border: 1px rgba(40, 241, 255, 0.37) solid;
         }
       }
@@ -130,6 +198,34 @@ h4 {
           flex-direction: column;
           row-gap: 4px;
         }
+      }
+    }
+  }
+}
+
+.bottomContainer {
+  display: flex;
+  padding: 10px;
+  .bottomButtons {
+    display: flex;
+    align-items: center;
+    .circularButton {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border:1px #cecece solid;
+      background-color: rgb(32, 64, 102)
+    }
+
+    .flatButtons {
+      margin-left: 30px;
+      display: flex;
+      column-gap: 4px;
+      .flatButton {
+        border: 1px rgba(255, 255, 255, 0.822) solid;
+        height: 15px;
+        border-radius: 5px;
+        width: 50px;
       }
     }
   }
