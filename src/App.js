@@ -63,7 +63,7 @@ function App() {
       const type2 = types.length > 1 ? types[1] : null
       _.forEach(keys, (key) => {
         const dataByTypeKey = WEAKNESS_DATA[key];
-        const combinedPoints = type2 ? dataByTypeKey[type] * dataByTypeKey[type2] : dataByTypeKey[type] 
+        const combinedPoints = type2 ? dataByTypeKey[type] * dataByTypeKey[type2] : dataByTypeKey[type]
         mergedTypeEffects = {
           ...mergedTypeEffects,
           [key]: combinedPoints
@@ -80,11 +80,11 @@ function App() {
     const immuneArray = []
 
     _.forEach(effectivenessByTypes, (value, key) => {
-      if (value === 2) {
+      if (value >= 2) {
         weaknessArray.push(key)
       }
 
-      if (value < 1) {
+      if (value < 1 && value !== 0) {
         resistanceArray.push(key)
       }
 
@@ -92,7 +92,6 @@ function App() {
         immuneArray.push(key)
       }
     })
-
     return {
       weaknessArray,
       resistanceArray,
