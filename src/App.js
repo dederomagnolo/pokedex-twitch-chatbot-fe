@@ -13,11 +13,12 @@ function App() {
     id: '',
     name: '',
     types: [],
-    sprite: ''
+    sprite: '',
+    userName: ''
   });
 
   const [spriteBlink, setSpriteBlink] = useState(pokeInfo.sprite)
-
+  const [hide, setHide] = useState(true)
   const { 
     sendMessage,
     lastJsonMessage,
@@ -39,10 +40,11 @@ function App() {
     if(pokeInfoEvent && pokeInfoEvent.data) {
       const parsedPokeInfo = JSON.parse(pokeInfoEvent.data);
       setPokeInfo(parsedPokeInfo);
+      setHide(false)
     }
   }, [pokeInfoEvent]);
 
-  const { name, id, types, sprite, spriteShiny } = pokeInfo;
+  const { name, id, types, sprite, spriteShiny, userName } = pokeInfo;
 
   // useEffect(() => {
   //   setTimeout(() => {
@@ -100,8 +102,18 @@ function App() {
   }
   const mappedEffectivenessInfos = mapEffectivenessInfos()
 
+  useEffect(() => {
+    if(!hide) {
+      setTimeout(() => {
+        setHide(true)
+      }, 30000)
+    }
+  }, [mappedEffectivenessInfos])
+
+  const immuneArray = mappedEffectivenessInfos.immuneArray;
+
   return (
-    <div className="App">
+    !hide && <div className="App">
       <div className='pokedexContainer'>
         <div className='head'>
           <div className='pokedexBlueLens'>
@@ -148,12 +160,14 @@ function App() {
                   {mapTypes(mappedEffectivenessInfos.resistanceArray)}
                 </div>
               </div>
-              <div className='contentBlock effectivenessBlock'>
-                IMMUNE: 
-                <div className='effectivenessContent'>
-                  {mapTypes(mappedEffectivenessInfos.immuneArray)}
+              {immuneArray && immuneArray.length > 1 && (
+                <div className='contentBlock effectivenessBlock'>
+                  IMMUNE: 
+                  <div className='effectivenessContent'>
+                    {mapTypes(immuneArray)}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           <div className='screenCurvedPart'>
@@ -163,15 +177,22 @@ function App() {
               <div className='line'></div>
             </div>
           </div>
-          {/* <div className='bottomContainer'>
+          <div className='bottomContainer'>
             <div className='bottomButtons'>
-              <div className='circularButton'></div>
+              {/* <div className='circularButton'></div> */}
               <div className='flatButtons'>
-                <div className='flatButton greenLight'></div>
-                <div className='flatButton redLight'></div>
+                <div className='commandSentBy'>
+                  <span className='commandLabel'>
+                    Command sent by:
+                  </span>
+                  <div className='flatButton greenLight'>
+                    <span>{userName}</span>
+                  </div>
+                </div>
+                {/* <div className='flatButton redLight'></div> */}
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
